@@ -1,6 +1,7 @@
 {
   "name": "multi-vendor-server",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -11,7 +12,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "cross-env": "^7.0.3",
