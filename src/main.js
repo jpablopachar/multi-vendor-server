@@ -25,8 +25,6 @@ import { paymentRouter } from './routes/payment/paymentRoutes.js'
 import { socketConnection } from './socket/index.js'
 import { dbConnect } from './utils/db.js'
 
-// import { swaggerDocs } from './routes/swagger.js'
-
 const corsOptions = {
   origin: [CLIENT_REACT_URL, FRONTEND_REACT_URL, CLIENT_ANGULAR_URL],
   credentials: true,
@@ -63,7 +61,5 @@ dbConnect().then(() => {
         : `Server is running on http://localhost:${PORT}`
     // eslint-disable-next-line no-undef
     console.log(message)
-
-    // swaggerDocs(app, PORT)
   })
 })
