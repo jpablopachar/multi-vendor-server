@@ -1,10 +1,13 @@
 /* eslint-disable no-undef */
 
 import { compare, hash } from 'bcrypt'
+import { NODE_ENV } from '../../config.js'
 import SellerCustomer from '../../models/chat/seller-customer.js'
 import Customer from '../../models/customer.js'
 import { responseReturn } from '../../utils/response.js'
 import { createToken } from '../../utils/tokenCreate.js'
+
+const isProd = NODE_ENV === 'prod'
 
 export class CustomerAuthController {
   customerRegister = async (req, res) => {
@@ -34,6 +37,9 @@ export class CustomerAuthController {
 
         res.cookie('customerToken', token, {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          httpOnly: true,
+          secure: isProd,
+          sameSite: isProd ? 'None' : 'Lax',
         })
 
         responseReturn(res, 201, {
@@ -65,6 +71,9 @@ export class CustomerAuthController {
 
           res.cookie('customerToken', token, {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'None' : 'Lax',
           })
 
           responseReturn(res, 201, {
@@ -83,7 +92,12 @@ export class CustomerAuthController {
   }
 
   customerLogout = async (req, res) => {
-    res.cookie('customerToken', '', { expires: new Date(Date.now()) })
+    res.cookie('customerToken', '', {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
+    })
 
     responseReturn(res, 200, { message: 'User logout successfully' })
   }
