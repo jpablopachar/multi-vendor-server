@@ -3,11 +3,14 @@
 import { compare, hash } from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import formidable from 'formidable'
+import { NODE_ENV } from '../../config.js'
 import Admin from '../../models/admin.js'
 import SellerCustomers from '../../models/chat/seller-customer.js'
 import Seller from '../../models/seller.js'
 import { responseReturn } from '../../utils/response.js'
 import { createToken } from '../../utils/tokenCreate.js'
+
+const isProd = NODE_ENV === 'prod'
 
 export class AuthController {
   adminLogin = async (req, res) => {
@@ -79,6 +82,9 @@ export class AuthController {
       const token = createToken({ id: seller.id, role: seller.role })
 
       res.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'None' : 'Lax',
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       })
 
@@ -185,7 +191,8 @@ export class AuthController {
       res.cookie('accessToken', null, {
         expires: new Date(Date.now()),
         httpOnly: true,
-        secure: true,
+        secure: isProd,
+        sameSite: isProd ? 'None' : 'Lax',
       })
 
       responseReturn(res, 200, { message: 'Logout successful' })
@@ -205,6 +212,9 @@ export class AuthController {
 
     res.cookie('accessToken', token, {
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
     })
 
     responseReturn(res, 200, { token, message: 'Login successful' })
