@@ -5,6 +5,13 @@ import formidable from 'formidable'
 import Product from '../../models/product.js'
 import { responseReturn } from '../../utils/response.js'
 
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+  secure: true,
+})
+
 export class ProductController {
   addProduct = async (req, res) => {
     const { id } = req
@@ -29,13 +36,6 @@ export class ProductController {
 
       const slug = name.split(' ').join('-')
 
-      cloudinary.config({
-        cloud_name: process.env.CLOUD_NAME,
-        api_key: process.env.CLOUD_API_KEY,
-        api_secret: process.env.CLOUD_API_SECRET,
-        secure: true,
-      })
-
       try {
         let allImageUrl = []
 
@@ -44,7 +44,7 @@ export class ProductController {
             folder: 'products',
           })
 
-          allImageUrl = [...allImageUrl, result.url]
+          allImageUrl = [...allImageUrl, result.secure_url]
         }
 
         await Product.create({
@@ -178,7 +178,7 @@ export class ProductController {
 
             const index = images.findIndex((image) => image === oldImage)
 
-            images[index] = result.url
+            images[index] = result.secure_url
 
             await Product.findByIdAndUpdate(productId, { images })
 

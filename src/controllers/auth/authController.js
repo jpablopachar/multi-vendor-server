@@ -12,6 +12,13 @@ import { createToken } from '../../utils/tokenCreate.js'
 
 const isProd = NODE_ENV === 'prod'
 
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+  secure: true,
+})
+
 export class AuthController {
   adminLogin = async (req, res) => {
     const { email, password } = req.body
@@ -122,13 +129,6 @@ export class AuthController {
     const form = formidable({ multiples: true })
 
     form.parse(req, async (err, _, files) => {
-      cloudinary.config({
-        cloud_name: process.env.CLOUD_NAME,
-        api_key: process.env.CLOUD_API_KEY,
-        api_secret: process.env.CLOUD_API_SECRET,
-        secure: true,
-      })
-
       const { image } = files
 
       try {
@@ -138,7 +138,7 @@ export class AuthController {
 
         if (!result) responseReturn(res, 404, { error: 'Image upload failed' })
 
-        await Seller.findByIdAndUpdate(id, { image: result.url })
+        await Seller.findByIdAndUpdate(id, { image: result.secure_url })
 
         const userInfo = await Seller.findById(id)
 

@@ -169,7 +169,7 @@ export class DashboardController {
 
         const banner = await Banner.create({
           productId,
-          banner: result.url,
+          banner: result.secure_url,
           link: product.slug,
         })
 
@@ -211,13 +211,13 @@ export class DashboardController {
 
         await cloudinary.uploader.destroy(imageName)
 
-        const { url } = await cloudinary.uploader.upload(mainban.filepath, {
+        const { secure_url } = await cloudinary.uploader.upload(mainban.filepath, {
           folder: 'banners',
         })
 
         banner = await Banner.findByIdAndUpdate(
           bannerId,
-          { banner: url },
+          { banner: secure_url },
           { new: true }
         )
 

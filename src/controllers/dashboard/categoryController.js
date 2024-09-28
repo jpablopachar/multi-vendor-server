@@ -142,7 +142,7 @@ export class CategoryController {
         folder: 'categories',
       })
 
-      return result.url
+      return result.secure_url
     } catch (error) {
       console.error('Error uploading image:', error)
 
