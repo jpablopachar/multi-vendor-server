@@ -24,7 +24,7 @@ export class AuthController {
     const { email, password } = req.body
 
     if (!email || !password)
-      responseReturn(res, 400, { error: 'Email and password required' })
+      return responseReturn(res, 400, { error: 'Email and password required' })
 
     try {
       const admin = await Admin.findOne({ email }).select('+password')
@@ -35,7 +35,7 @@ export class AuthController {
     } catch (error) {
       console.error('Error in adminLogin', error)
 
-      responseReturn(res, 500, { error: 'Error logging admin' })
+      return responseReturn(res, 500, { error: 'Error logging admin' })
     }
   }
 
@@ -43,18 +43,18 @@ export class AuthController {
     const { email, password } = req.body
 
     if (!email || !password)
-      responseReturn(res, 400, { error: 'Email and password required' })
+      return responseReturn(res, 400, { error: 'Email and password required' })
 
     try {
       const seller = await Seller.findOne({ email }).select('+password')
 
-      if (!seller) responseReturn(res, 404, { error: 'Email not found' })
+      if (!seller) return responseReturn(res, 404, { error: 'Email not found' })
 
       return this._handleLogin(seller, password, res)
     } catch (error) {
       console.error('Error in sellerLogin', error)
 
-      responseReturn(res, 500, { error: 'Error logging seller' })
+      return responseReturn(res, 500, { error: 'Error logging seller' })
     }
   }
 
@@ -62,19 +62,20 @@ export class AuthController {
     const { email, name, password } = req.body
 
     if (!email || !name || !password)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'Email, name and password are required',
       })
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     if (!emailRegex.test(email))
-      responseReturn(res, 400, { error: 'Invalid email' })
+      return responseReturn(res, 400, { error: 'Invalid email' })
 
     try {
       const user = await Seller.findOne({ email })
 
-      if (!user) responseReturn(res, 400, { error: 'Email already registered' })
+      if (!user)
+        return responseReturn(res, 400, { error: 'Email already registered' })
 
       const seller = await Seller.create({
         name,
@@ -95,11 +96,11 @@ export class AuthController {
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       })
 
-      responseReturn(res, 201, { token, message: 'Register successful' })
+      return responseReturn(res, 201, { token, message: 'Register successful' })
     } catch {
       console.error('Error in sellerRegister', error)
 
-      responseReturn(res, 500, { error: 'Error register seller' })
+      return responseReturn(res, 500, { error: 'Error register seller' })
     }
   }
 
@@ -110,16 +111,16 @@ export class AuthController {
       if (role === 'admin') {
         const user = await Admin.findById(id)
 
-        responseReturn(res, 200, { userInfo: user })
+        return responseReturn(res, 200, { userInfo: user })
       } else {
         const seller = await Seller.findById(id)
 
-        responseReturn(res, 200, { userInfo: seller })
+        return responseReturn(res, 200, { userInfo: seller })
       }
     } catch {
       console.error('Error in getUser', error)
 
-      responseReturn(res, 500, { error: 'Error get user' })
+      return responseReturn(res, 500, { error: 'Error get user' })
     }
   }
 
@@ -136,20 +137,21 @@ export class AuthController {
           folder: 'profile',
         })
 
-        if (!result) responseReturn(res, 404, { error: 'Image upload failed' })
+        if (!result)
+          return responseReturn(res, 404, { error: 'Image upload failed' })
 
         await Seller.findByIdAndUpdate(id, { image: result.secure_url })
 
         const userInfo = await Seller.findById(id)
 
-        responseReturn(res, 201, {
+        return responseReturn(res, 201, {
           message: 'Profile image upload successfully',
           userInfo,
         })
       } catch (error) {
         console.error('Error in profileImageUpload', error)
 
-        responseReturn(res, 500, { error: 'Error upload image profile' })
+        return responseReturn(res, 500, { error: 'Error upload image profile' })
       }
     })
   }
@@ -159,7 +161,7 @@ export class AuthController {
     const { id } = req
 
     if (!division || !district || !shopName || !subDistrict)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'Division, district, shopName and subDistrict are required',
       })
 
@@ -175,14 +177,14 @@ export class AuthController {
 
       const userInfo = await Seller.findById(id)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         message: 'Profile info add successful',
         userInfo,
       })
     } catch (error) {
       console.error('Error in profileInfoAdd', error)
 
-      responseReturn(res, 500, { error: 'Error add info' })
+      return responseReturn(res, 500, { error: 'Error add info' })
     }
   }
 
@@ -195,18 +197,18 @@ export class AuthController {
         sameSite: isProd ? 'None' : 'Lax',
       })
 
-      responseReturn(res, 200, { message: 'Logout successful' })
+      return responseReturn(res, 200, { message: 'Logout successful' })
     } catch (error) {
       console.error('Error in logout', error)
 
-      responseReturn(res, 500, { error: 'Error logout' })
+      return responseReturn(res, 500, { error: 'Error logout' })
     }
   }
 
   _handleLogin = async (user, password, res) => {
     const match = await compare(password, user.password)
 
-    if (!match) responseReturn(res, 401, { error: 'Invalid password' })
+    if (!match) return responseReturn(res, 401, { error: 'Invalid password' })
 
     const token = createToken({ id: user.id, role: user.role })
 
@@ -217,6 +219,6 @@ export class AuthController {
       sameSite: isProd ? 'None' : 'Lax',
     })
 
-    responseReturn(res, 200, { token, message: 'Login successful' })
+    return responseReturn(res, 200, { token, message: 'Login successful' })
   }
 }

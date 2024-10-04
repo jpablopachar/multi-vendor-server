@@ -65,7 +65,7 @@ export class OrderController {
         this.paymentCheck(order.id)
       }, 15000)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         message: 'Order placed successfully',
         orderId: order.id,
       })
@@ -110,14 +110,14 @@ export class OrderController {
           cancelledOrders: 0,
         }
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         recentOrders,
         pendingOrders,
         totalOrders,
         cancelledOrders,
       })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -131,9 +131,9 @@ export class OrderController {
 
       const orders = await CustomerOrders.find(query)
 
-      responseReturn(res, 200, { orders })
+      return responseReturn(res, 200, { orders })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -143,9 +143,9 @@ export class OrderController {
     try {
       const order = await CustomerOrders.findById(orderId)
 
-      responseReturn(res, 200, { order })
+      return responseReturn(res, 200, { order })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -182,9 +182,9 @@ export class OrderController {
       const orders = result[0].paginatedResults
       const totalOrders = result[0].totalOrders[0]?.count || 0
 
-      responseReturn(res, 200, { orders, totalOrders })
+      return responseReturn(res, 200, { orders, totalOrders })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -204,9 +204,9 @@ export class OrderController {
         },
       ])
 
-      responseReturn(res, 200, { order: order[0] })
+      return responseReturn(res, 200, { order: order[0] })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -217,9 +217,11 @@ export class OrderController {
     try {
       await CustomerOrders.findOneAndUpdate(orderId, { deliveryStatus: status })
 
-      responseReturn(res, 200, { message: 'Order status updated successfully' })
+      return responseReturn(res, 200, {
+        message: 'Order status updated successfully',
+      })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -252,9 +254,9 @@ export class OrderController {
       const orders = result[0].paginatedResults
       const totalOrders = result[0].totalOrders[0]?.count || 0
 
-      responseReturn(res, 200, { orders, totalOrders })
+      return responseReturn(res, 200, { orders, totalOrders })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -264,9 +266,9 @@ export class OrderController {
     try {
       const order = await AuthorOrders.findById(orderId)
 
-      responseReturn(res, 200, { order })
+      return responseReturn(res, 200, { order })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -277,9 +279,11 @@ export class OrderController {
     try {
       await AuthorOrders.findOneAndUpdate(orderId, { deliveryStatus: status })
 
-      responseReturn(res, 200, { message: 'Order status updated successfully' })
+      return responseReturn(res, 200, {
+        message: 'Order status updated successfully',
+      })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -293,9 +297,9 @@ export class OrderController {
         automatic_payment_methods: { enabled: true },
       })
 
-      responseReturn(res, 200, { clientSecret: payment.client_secret })
+      return responseReturn(res, 200, { clientSecret: payment.client_secret })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -338,9 +342,11 @@ export class OrderController {
         )
       )
 
-      responseReturn(res, 200, { message: 'Order confirmed successfully' })
+      return responseReturn(res, 200, {
+        message: 'Order confirmed successfully',
+      })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 

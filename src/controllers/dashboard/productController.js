@@ -61,9 +61,11 @@ export class ProductController {
           brand: brand[0].trim(),
         })
 
-        responseReturn(res, 201, { message: 'Product added successfully' })
+        return responseReturn(res, 201, {
+          message: 'Product added successfully',
+        })
       } catch (error) {
-        responseReturn(res, 500, { error: error.message })
+        return responseReturn(res, 500, { error: error.message })
       }
     })
   }
@@ -89,7 +91,7 @@ export class ProductController {
           sellerId: id,
         }).countDocuments()
 
-        responseReturn(res, 200, { products, total })
+        return responseReturn(res, 200, { products, total })
       } else {
         const products = await Product.find({ sellerId: id })
           .skip(skipPage)
@@ -98,7 +100,7 @@ export class ProductController {
 
         const total = await Product.find({ sellerId: id }).countDocuments()
 
-        responseReturn(res, 200, { products, total })
+        return responseReturn(res, 200, { products, total })
       }
     } catch (error) {
       console.log(error.message)
@@ -111,7 +113,7 @@ export class ProductController {
     try {
       const product = await Product.findById(productId)
 
-      responseReturn(res, 200, { product })
+      return responseReturn(res, 200, { product })
     } catch (error) {
       console.log(error.message)
     }
@@ -139,12 +141,12 @@ export class ProductController {
 
       const product = await Product.findById(productId)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         product,
         message: 'Product updated successfully',
       })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -156,7 +158,7 @@ export class ProductController {
       const { newImage } = files
 
       if (err) {
-        responseReturn(res, 400, { error: err.message })
+        return responseReturn(res, 400, { error: err.message })
       } else {
         try {
           cloudinary.config({
@@ -184,15 +186,15 @@ export class ProductController {
 
             const product = await Product.findById(productId, { images })
 
-            responseReturn(res, 200, {
+            return responseReturn(res, 200, {
               product,
               message: 'Product Image updated successfully',
             })
           } else {
-            responseReturn(res, 404, { error: 'Image upload failed' })
+            return responseReturn(res, 404, { error: 'Image upload failed' })
           }
         } catch (error) {
-          responseReturn(res, 404, { error: error.message })
+          return responseReturn(res, 404, { error: error.message })
         }
       }
     })

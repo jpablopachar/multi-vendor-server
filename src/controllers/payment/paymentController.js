@@ -34,11 +34,11 @@ export class PaymentController {
         code: uuid(),
       })
 
-      responseReturn(res, 200, { url: accountLink.url })
+      return responseReturn(res, 200, { url: accountLink.url })
     } catch (error) {
       console.error('Error in createStripeConnectAccount', error)
 
-      responseReturn(res, 500, { error: 'Internal server error' })
+      return responseReturn(res, 500, { error: 'Internal server error' })
     }
   }
 

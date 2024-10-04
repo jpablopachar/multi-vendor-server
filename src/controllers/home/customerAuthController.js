@@ -17,7 +17,7 @@ export class CustomerAuthController {
       const customer = await Customer.findOne({ email })
 
       if (customer) {
-        responseReturn(res, 404, { error: 'Email already exists' })
+        return responseReturn(res, 404, { error: 'Email already exists' })
       } else {
         const createCustomer = await Customer.create({
           name: name.trim(),
@@ -42,7 +42,7 @@ export class CustomerAuthController {
           sameSite: isProd ? 'None' : 'Lax',
         })
 
-        responseReturn(res, 201, {
+        return responseReturn(res, 201, {
           message: 'User register successfully',
           token,
         })
@@ -76,15 +76,15 @@ export class CustomerAuthController {
             sameSite: isProd ? 'None' : 'Lax',
           })
 
-          responseReturn(res, 201, {
+          return responseReturn(res, 201, {
             message: 'User login successfully',
             token,
           })
         } else {
-          responseReturn(res, 404, { error: 'Password incorrect' })
+          return responseReturn(res, 404, { error: 'Password incorrect' })
         }
       } else {
-        responseReturn(res, 404, { error: 'Email not found' })
+        return responseReturn(res, 404, { error: 'Email not found' })
       }
     } catch (error) {
       console.log(error.message)
@@ -99,6 +99,6 @@ export class CustomerAuthController {
       sameSite: isProd ? 'None' : 'Lax',
     })
 
-    responseReturn(res, 200, { message: 'User logout successfully' })
+    return responseReturn(res, 200, { message: 'User logout successfully' })
   }
 }

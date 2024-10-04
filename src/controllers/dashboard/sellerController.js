@@ -20,10 +20,10 @@ export class SellerController {
           status: 'pending',
         }).countDocuments()
 
-        responseReturn(res, 200, { sellers, totalSellers })
+        return responseReturn(res, 200, { sellers, totalSellers })
       }
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -33,9 +33,9 @@ export class SellerController {
     try {
       const seller = await Seller.findById(sellerId)
 
-      responseReturn(res, 200, { seller })
+      return responseReturn(res, 200, { seller })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -47,12 +47,12 @@ export class SellerController {
 
       const seller = await Seller.findById(sellerId)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         seller,
         message: 'Seller status updated successfully',
       })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -79,7 +79,7 @@ export class SellerController {
           status: 'active',
         }).countDocuments()
 
-        responseReturn(res, 200, { sellers, totalSellers })
+        return responseReturn(res, 200, { sellers, totalSellers })
       } else {
         const sellers = await Seller.find({ status: 'active' })
           .skip(skipPage)
@@ -90,7 +90,7 @@ export class SellerController {
           status: 'active',
         }).countDocuments()
 
-        responseReturn(res, 200, { sellers, totalSellers })
+        return responseReturn(res, 200, { sellers, totalSellers })
       }
     } catch (error) {
       console.log('Active sellers error', error.message)
@@ -120,7 +120,7 @@ export class SellerController {
           status: 'deactive',
         }).countDocuments()
 
-        responseReturn(res, 200, { sellers, totalSellers })
+        return responseReturn(res, 200, { sellers, totalSellers })
       } else {
         const sellers = await Seller.find({ status: 'deactive' })
           .skip(skipPage)
@@ -131,7 +131,7 @@ export class SellerController {
           status: 'deactive',
         }).countDocuments()
 
-        responseReturn(res, 200, { sellers, totalSellers })
+        return responseReturn(res, 200, { sellers, totalSellers })
       }
     } catch (error) {
       console.log('Deactive sellers error', error.message)

@@ -12,7 +12,7 @@ export class ChatController {
     const { sellerId, userId } = req.body
 
     if (!sellerId || !userId)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'sellerId and userId are required',
       })
 
@@ -20,7 +20,7 @@ export class ChatController {
       if (sellerId === '') {
         const myFriends = await SellerCustomer.findOne({ myId: userId })
 
-        responseReturn(res, 200, { myFriends: myFriends.myFriends })
+        return responseReturn(res, 200, { myFriends: myFriends.myFriends })
       }
 
       const [seller, user] = await Promise.all([
@@ -28,9 +28,10 @@ export class ChatController {
         Customer.findById(userId),
       ])
 
-      if (!seller) responseReturn(res, 404, { error: 'Seller not found' })
+      if (!seller)
+        return responseReturn(res, 404, { error: 'Seller not found' })
 
-      if (!user) responseReturn(res, 404, { error: 'User not found' })
+      if (!user) return responseReturn(res, 404, { error: 'User not found' })
 
       const checkSeller = await SellerCustomer.findOne({
         myId: userId,
@@ -81,9 +82,11 @@ export class ChatController {
 
       const myFriends = await SellerCustomer.findOne({ myId: userId })
 
-      const currentFriend = myFriends.myFriends.find((fd) => fd.fdIn === sellerId)
+      const currentFriend = myFriends.myFriends.find(
+        (fd) => fd.fdIn === sellerId
+      )
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         messages,
         friends: myFriends.myFriends,
         currentFriend,
@@ -91,7 +94,7 @@ export class ChatController {
     } catch (error) {
       console.error('Error in addCustomerFriend:', error)
 
-      responseReturn(res, 500, { error: 'Error in addCustomerFriend' })
+      return responseReturn(res, 500, { error: 'Error in addCustomerFriend' })
     }
   }
 
@@ -99,7 +102,7 @@ export class ChatController {
     const { userId, text, sellerId, name } = req.body
 
     if (!userId || !text || !sellerId || !name)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'userId, text, sellerId and name are required',
       })
 
@@ -114,11 +117,11 @@ export class ChatController {
       await this._updateFriendPosition(userId, sellerId)
       await this._updateFriendPosition(sellerId, userId)
 
-      responseReturn(res, 200, { message })
+      return responseReturn(res, 200, { message })
     } catch (error) {
       console.error('Error in customerMessageAdd:', error)
 
-      responseReturn(res, 500, { error: 'Error in customerMessageAdd' })
+      return responseReturn(res, 500, { error: 'Error in customerMessageAdd' })
     }
   }
 
@@ -126,18 +129,18 @@ export class ChatController {
     const { sellerId } = req.params
 
     if (!sellerId)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'sellerId is required',
       })
 
     try {
       const data = await SellerCustomer.findOne({ myId: sellerId })
 
-      responseReturn(res, 200, { customers: data.myFriends })
+      return responseReturn(res, 200, { customers: data.myFriends })
     } catch (error) {
       console.error('Error in getCustomers:', error)
 
-      responseReturn(res, 500, { error: 'Error in getCustomers' })
+      return responseReturn(res, 500, { error: 'Error in getCustomers' })
     }
   }
 
@@ -155,11 +158,13 @@ export class ChatController {
 
       const currentCustomer = await Customer.findById(customerId)
 
-      responseReturn(res, 200, { messages, currentCustomer })
+      return responseReturn(res, 200, { messages, currentCustomer })
     } catch (error) {
       console.error('Error in getCustomersSellerMessage:', error)
 
-      responseReturn(res, 500, { error: 'Error in getCustomersSellerMessage' })
+      return responseReturn(res, 500, {
+        error: 'Error in getCustomersSellerMessage',
+      })
     }
   }
 
@@ -167,7 +172,7 @@ export class ChatController {
     const { senderId, text, receiverId, name } = req.body
 
     if (!senderId || !text || !receiverId || !name)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'senderId, text, receiverId and name are required',
       })
 
@@ -182,11 +187,11 @@ export class ChatController {
       await this._updateFriendPosition(senderId, receiverId)
       await this._updateFriendPosition(receiverId, senderId)
 
-      responseReturn(res, 200, { message })
+      return responseReturn(res, 200, { message })
     } catch (error) {
       console.error('Error in sellerMessageAdd:', error)
 
-      responseReturn(res, 500, { error: 'Error in sellerMessageAdd' })
+      return responseReturn(res, 500, { error: 'Error in sellerMessageAdd' })
     }
   }
 
@@ -194,11 +199,11 @@ export class ChatController {
     try {
       const sellers = await Seller.find({})
 
-      responseReturn(res, 200, { sellers })
+      return responseReturn(res, 200, { sellers })
     } catch (error) {
       console.error('Error in getSellers:', error)
 
-      responseReturn(res, 500, { error: 'Error in getSellers' })
+      return responseReturn(res, 500, { error: 'Error in getSellers' })
     }
   }
 
@@ -206,7 +211,7 @@ export class ChatController {
     const { senderId, receiverId, message, senderName } = req.body
 
     if (!message || !senderName)
-      responseReturn(res, 400, {
+      return responseReturn(res, 400, {
         error: 'message and senderName are required',
       })
 
@@ -218,11 +223,13 @@ export class ChatController {
         senderName,
       })
 
-      responseReturn(res, 200, { message: messageData })
+      return responseReturn(res, 200, { message: messageData })
     } catch (error) {
       console.error('Error in sellerAdminMessageInsert:', error)
 
-      responseReturn(res, 500, { error: 'Error in sellerAdminMessageInsert' })
+      return responseReturn(res, 500, {
+        error: 'Error in sellerAdminMessageInsert',
+      })
     }
   }
 
@@ -230,7 +237,7 @@ export class ChatController {
     const { receiverId } = req.params
 
     if (!receiverId)
-      responseReturn(res, 400, { error: 'receiverId is required' })
+      return responseReturn(res, 400, { error: 'receiverId is required' })
 
     const id = ''
 
@@ -244,11 +251,11 @@ export class ChatController {
 
       const currentSeller = receiverId ? await Seller.findById(receiverId) : {}
 
-      responseReturn(res, 200, { messages, currentSeller })
+      return responseReturn(res, 200, { messages, currentSeller })
     } catch (error) {
       console.error('Error in getAdminMessages:', error)
 
-      responseReturn(res, 500, { error: 'Error in getAdminMessages' })
+      return responseReturn(res, 500, { error: 'Error in getAdminMessages' })
     }
   }
 
@@ -264,11 +271,11 @@ export class ChatController {
         ],
       })
 
-      responseReturn(res, 200, { messages })
+      return responseReturn(res, 200, { messages })
     } catch (error) {
       console.error('Error in getSellerMessages:', error)
 
-      responseReturn(res, 500, { error: 'Error in getSellerMessages' })
+      return responseReturn(res, 500, { error: 'Error in getSellerMessages' })
     }
   }
 
