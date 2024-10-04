@@ -13,7 +13,7 @@ export class HomeController {
     try {
       const categories = await Category.find({})
 
-      responseReturn(res, 200, { categories })
+      return responseReturn(res, 200, { categories })
     } catch (error) {
       console.error('Error in getCategories:', error)
 
@@ -37,7 +37,7 @@ export class HomeController {
 
       const discountProduct = this._formatProduct(allProduct3)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         products,
         latestProduct,
         topRatedProduct,
@@ -65,7 +65,7 @@ export class HomeController {
 
       const latestProduct = this._formatProduct(products)
 
-      responseReturn(res, 200, { latestProduct, priceRange })
+      return responseReturn(res, 200, { latestProduct, priceRange })
     } catch (error) {
       console.error('Error in productPriceRange:', error)
 
@@ -93,7 +93,7 @@ export class HomeController {
 
       const result = filteredProducts.skip().limit().getProducts()
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         products: result,
         totalProducts: totalProductsCount,
         parPage,

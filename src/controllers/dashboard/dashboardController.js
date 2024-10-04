@@ -48,7 +48,7 @@ export class DashboardController {
         CustomerOrders.find().sort({ createdAt: -1 }).limit(5),
       ])
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         totalProducts,
         totalOrders,
         totalSellers,
@@ -59,7 +59,9 @@ export class DashboardController {
     } catch (error) {
       console.log('Error in getAdminDashboardData', error)
 
-      responseReturn(res, 500, { error: 'Error get admin dashboard data' })
+      return responseReturn(res, 500, {
+        error: 'Error get admin dashboard data',
+      })
     }
   }
 
@@ -101,7 +103,7 @@ export class DashboardController {
           .limit(5),
       ])
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         totalProducts,
         totalOrders,
         totalPendingOrders,
@@ -112,7 +114,9 @@ export class DashboardController {
     } catch (error) {
       console.log('Error in getSellerDashboardData', error)
 
-      responseReturn(res, 500, { error: 'Error get seller dashboard data' })
+      return responseReturn(res, 500, {
+        error: 'Error get seller dashboard data',
+      })
     }
   }
 
@@ -120,11 +124,11 @@ export class DashboardController {
     try {
       const banners = await Banner.aggregate([{ $sample: { size: 5 } }])
 
-      responseReturn(res, 200, { banners })
+      return responseReturn(res, 200, { banners })
     } catch (error) {
       console.log('Error in getBanners', error)
 
-      responseReturn(res, 500, { error: 'Error get banners' })
+      return responseReturn(res, 500, { error: 'Error get banners' })
     }
   }
 
@@ -136,11 +140,11 @@ export class DashboardController {
         productId: new Types.ObjectId(productId),
       })
 
-      responseReturn(res, 200, { banner })
+      return responseReturn(res, 200, { banner })
     } catch (error) {
       console.log('Error in getBanner', error)
 
-      responseReturn(res, 500, { error: 'Error get banner' })
+      return responseReturn(res, 500, { error: 'Error get banner' })
     }
   }
 
@@ -148,20 +152,21 @@ export class DashboardController {
     const form = formidable({ multiples: true })
 
     form.parse(req, async (err, field, files) => {
-      if (err) responseReturn(res, 500, { error: 'Error parsing form' })
+      if (err) return responseReturn(res, 500, { error: 'Error parsing form' })
 
       const { productId } = field
       const mainban = files.mainban?.[0]
 
       if (!productId || !mainban?.filepath)
-        responseReturn(res, 400, {
+        return responseReturn(res, 400, {
           error: 'Product ID or banner image missing',
         })
 
       try {
         const product = await Product.findById(productId)
 
-        if (!product) responseReturn(res, 404, { error: 'Product not found' })
+        if (!product)
+          return responseReturn(res, 404, { error: 'Product not found' })
 
         const result = await cloudinary.uploader.upload(mainban[0].filepath, {
           folder: 'banners',
@@ -173,14 +178,14 @@ export class DashboardController {
           link: product.slug,
         })
 
-        responseReturn(res, 200, {
+        return responseReturn(res, 200, {
           message: 'Banner added successfully',
           banner,
         })
       } catch (error) {
         console.log('Error in addBanner', error)
 
-        responseReturn(res, 500, { error: 'Error add banner' })
+        return responseReturn(res, 500, { error: 'Error add banner' })
       }
     })
   }
@@ -188,32 +193,37 @@ export class DashboardController {
   updateBanner = async (req, res) => {
     const { bannerId } = req.params
 
-    if (!bannerId) responseReturn(res, 400, { error: 'bannerId is required' })
+    if (!bannerId)
+      return responseReturn(res, 400, { error: 'bannerId is required' })
 
     const form = formidable({})
 
     form.parse(req, async (err, _, files) => {
-      if (err) responseReturn(res, 500, { error: 'Error parsing form' })
+      if (err) return responseReturn(res, 500, { error: 'Error parsing form' })
 
       const mainban = files.mainban?.[0]
 
       if (!mainban?.filepath)
-        responseReturn(res, 400, {
+        return responseReturn(res, 400, {
           error: 'Banner image missing',
         })
 
       try {
         let banner = await Banner.findById(bannerId)
 
-        if (!banner) responseReturn(res, 404, { error: 'Banner not found' })
+        if (!banner)
+          return responseReturn(res, 404, { error: 'Banner not found' })
 
         const imageName = path.basename(banner.banner).split('.')[0]
 
         await cloudinary.uploader.destroy(imageName)
 
-        const { secure_url } = await cloudinary.uploader.upload(mainban.filepath, {
-          folder: 'banners',
-        })
+        const { secure_url } = await cloudinary.uploader.upload(
+          mainban.filepath,
+          {
+            folder: 'banners',
+          }
+        )
 
         banner = await Banner.findByIdAndUpdate(
           bannerId,
@@ -221,14 +231,14 @@ export class DashboardController {
           { new: true }
         )
 
-        responseReturn(res, 200, {
+        return responseReturn(res, 200, {
           message: 'Banner updated successfully',
           banner,
         })
       } catch (error) {
         console.log('Error in updateBanner', error)
 
-        responseReturn(res, 500, { error: 'Error update banner' })
+        return responseReturn(res, 500, { error: 'Error update banner' })
       }
     })
   }

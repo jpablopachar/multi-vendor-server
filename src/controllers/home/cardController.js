@@ -118,7 +118,7 @@ export class CardController {
 
       const productArray = Object.values(productsBySeller)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         cardProducts: productArray,
         price: calculatePrice,
         cardProductCount,
@@ -127,7 +127,7 @@ export class CardController {
         buyProductItem,
       })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -137,9 +137,11 @@ export class CardController {
     try {
       await Card.findByIdAndDelete(cardId)
 
-      responseReturn(res, 200, { message: 'Product deleted successfully' })
+      return responseReturn(res, 200, {
+        message: 'Product deleted successfully',
+      })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -153,9 +155,9 @@ export class CardController {
 
       await Card.findByIdAndUpdate(cardId, { quantity: quantity + 1 })
 
-      responseReturn(res, 200, { message: 'Quantity updated' })
+      return responseReturn(res, 200, { message: 'Quantity updated' })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -169,9 +171,9 @@ export class CardController {
 
       await Card.findByIdAndUpdate(cardId, { quantity: quantity - 1 })
 
-      responseReturn(res, 200, { message: 'Quantity updated' })
+      return responseReturn(res, 200, { message: 'Quantity updated' })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -193,7 +195,7 @@ export class CardController {
         })
       }
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -203,9 +205,12 @@ export class CardController {
     try {
       const wishList = await WishList.find({ userId })
 
-      responseReturn(res, 200, { wishListCount: wishList.length, wishList })
+      return responseReturn(res, 200, {
+        wishListCount: wishList.length,
+        wishList,
+      })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 
@@ -215,12 +220,12 @@ export class CardController {
     try {
       await WishList.findByIdAndDelete(wishlistId)
 
-      responseReturn(res, 200, {
+      return responseReturn(res, 200, {
         message: 'Product removed from wishList',
         wishlistId,
       })
     } catch (error) {
-      responseReturn(res, 500, { error: error.message })
+      return responseReturn(res, 500, { error: error.message })
     }
   }
 }
