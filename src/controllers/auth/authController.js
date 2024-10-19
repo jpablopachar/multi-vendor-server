@@ -74,7 +74,7 @@ export class AuthController {
     try {
       const user = await Seller.findOne({ email })
 
-      if (!user)
+      if (user)
         return responseReturn(res, 400, { error: 'Email already registered' })
 
       const seller = await Seller.create({
