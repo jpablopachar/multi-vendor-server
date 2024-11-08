@@ -60,7 +60,7 @@ export class CardController {
       )
 
       // Calcular cantidad de productos fuera de stock
-      cardProductCount = outOfStockProducts.reduce(
+      cardProductCount = stockProduct.reduce(
         (acc, product) => acc + product.quantity,
         0
       )
