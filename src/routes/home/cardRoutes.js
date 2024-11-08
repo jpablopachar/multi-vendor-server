@@ -7,7 +7,7 @@ const cardController = new CardController()
 export const cardRouter = Router()
 
 cardRouter.post('/add-to-card', cardController.addToCard)
-cardRouter.post('/add-to-wishList', cardController.addWishList)
+cardRouter.post('/add-to-wishlist', cardController.addWishList)
 
 cardRouter.get('/get-card-products/:userId', cardController.getCardProducts)
 cardRouter.get('/get-wishlist-products/:userId', cardController.getWishList)
